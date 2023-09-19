@@ -25,3 +25,4 @@ def write_data(data):
 
     with open("data/rdu-weather-history.json", "w") as file:
         json.dump(data, file, indent=4)
+    return data
