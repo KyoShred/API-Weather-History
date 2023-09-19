@@ -5,6 +5,7 @@ Exemple d'une API FastAPI utilisant un fichier JSON pour fournir des données et
 
 from fastapi import FastAPI
 import json
+from component.reader import read_json_file
 
 app = FastAPI()
 
@@ -14,6 +15,8 @@ with open("rdu-weather-history.json", "r") as file:
     data = json.load(file)
 
 #définit une route API avec FastAPI
+@app.post("component/read_json")
+
 @app.get("/data")
 async def get_data(S_date: str = None, E_date: str = None):
 
