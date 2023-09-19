@@ -14,3 +14,13 @@ def load_data():
 
   return data
 
+def write_data(data):
+  """
+  Écrit les données dans le fichier JSON.
+
+  Args:
+    data (dict): Le dictionnaire contenant les données.
+  """
+
+  with open("data/rdu-weather-history.json", "w") as file:
+    json.dump(data, file, indent=4)
