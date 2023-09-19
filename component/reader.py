@@ -14,7 +14,7 @@
 
 
 def get_data(data):
-    return {"message": f"Il y q {len(data)} releves", "date": data}
+    return {"message": f"Il y a {len(data)} releves", "date": data}
 
 
 def get_date_data(data, dated: str = None, datef: str = None):
