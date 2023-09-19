@@ -41,5 +41,3 @@ async def get_data(S_date: str = None, E_date: str = None):
         return {"date": data}
 
 
-
-
