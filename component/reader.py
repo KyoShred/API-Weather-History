@@ -6,6 +6,7 @@
   Returns:
     A Python object representing the JSON data.
 """
+file = open("../data/rdu-weather-history.json", "r")
 async def read_json_file(file: File) -> dict:
 
   json_data = file.read()
