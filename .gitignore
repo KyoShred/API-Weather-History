@@ -32,3 +32,4 @@ venv.bak/
 
 # IDE settings
 .idea/
+.DS_Store
