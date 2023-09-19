@@ -1,3 +1,7 @@
+import json
+from component.data import write_data
+
+data = write_data()
 
 
 def create_item(date: str, tmin: int, tmax: int, prcp: float, snow: float, snwd: float, awnd: float):
@@ -28,5 +32,3 @@ def create_item(date: str, tmin: int, tmax: int, prcp: float, snow: float, snwd:
     with open("rdu-weather-history.json", "w") as file:
         json.dump(data, file, indent=4)
     return {"message": "Données ajoutées avec succès"}
-
-
