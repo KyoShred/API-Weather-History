@@ -10,7 +10,7 @@ app = FastAPI()
 
 #permet d'ouvrire le fichier JSON et le lire
 
-with open("rdu-weather-history.json", "r") as file:
+with open("data/rdu-weather-history.json", "r") as file:
     data = json.load(file)
 
 #définit une route API avec FastAPI
