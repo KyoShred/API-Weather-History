@@ -14,6 +14,8 @@ with open("data/rdu-weather-history.json", "r") as file:
     data = json.load(file)
 
 #définit une route API avec FastAPI
+@app.post("/read_json")
+
 @app.get("/data")
 async def get_data(S_date: str = None, E_date: str = None):
 
@@ -35,7 +37,8 @@ async def get_data(S_date: str = None, E_date: str = None):
         filtered_data = [item for item in filtered_data if item.get('date') <= E_date]
 
         return {"date": filtered_data}
-
+    else:
+        return {"date": data}
 
 
 
