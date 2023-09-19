@@ -17,7 +17,7 @@ with open("data/rdu-weather-history.json", "r") as file:
 @app.post("/read_json")
 
 @app.get("/data")
-async def get_data(S_date: str = None, E_date: str = None):
+async def get_data(dated: str = None, datef: str = None):
 
     """
     Cette route permet de consulter les données en options avec filtrage par date.
@@ -30,11 +30,11 @@ async def get_data(S_date: str = None, E_date: str = None):
     """
     filtered_data = data
 
-    if S_date:
-        filtered_data = [item for item in filtered_data if item.get("date") >= S_date]
+    if dated:
+        filtered_data = [item for item in filtered_data if item.get("date") >= dated]
 
-    if E_date:
-        filtered_data = [item for item in filtered_data if item.get('date') <= E_date]
+    if datef:
+        filtered_data = [item for item in filtered_data if item.get('date') <= datef]
 
         return {"date": filtered_data}
     else:
