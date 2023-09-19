@@ -2,25 +2,26 @@ import json
 
 
 def load_data():
-  """
+    """
   Charge les données du fichier JSON et les retourne sous forme de dictionnaire.
 
   Returns:
     dict: Le dictionnaire contenant les données.
   """
 
-  with open("data/rdu-weather-history.json", "r") as file:
-    data = json.load(file)
+    with open("data/rdu-weather-history.json", "r") as file:
+        data = json.load(file)
 
-  return data
+    return data
 
-def write_data(data):
-  """
+
+def write_data():
+    """
   Écrit les données dans le fichier JSON.
 
   Args:
     data (dict): Le dictionnaire contenant les données.
   """
 
-  with open("data/rdu-weather-history.json", "w") as file:
-    json.dump(data, file, indent=4)
+    with open("data/rdu-weather-history.json", "w") as file:
+        json.dump(data, file, indent=4)
