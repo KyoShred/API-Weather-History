@@ -1,4 +1,5 @@
 import json
+from http.client import HTTPException
 
 from fastapi import FastAPI
 from component.data import load_data
@@ -66,6 +67,9 @@ async def delete_item(date_compare: str):
         return {"message": f"Aucune donnée correspondant à la date {date_compare} n'a été trouvée."}
 
 
+class HTTPException:
+    pass
+
 
 @app.patch("/modify")
 async def modify_item(date: str, tmin: int, tmax: int, prcp: float, snow: float, snwd: float,
@@ -79,5 +83,26 @@ async def modify_item(date: str, tmin: int, tmax: int, prcp: float, snow: float,
 
     if found:
         print(f"modification possible à la donnée {donnee}")
+
     else:
         print(f"aucune donnée n'existe à la date {date}")
+
+@app.put("/update/{date}")
+async def update_item(date: str, tmin: int, tmax: int, prcp: float, snow: float, snwd: float, awnd: float):
+            found = False  # Utilisez cette variable pour indiquer si une correspondance a été trouvée
+            for i in data:
+                if i["date"] == date:
+                    i["tmin"] = tmin
+                    i["tmax"] = tmax
+                    i["prcp"] = prcp
+                    i["snow"] = snow
+                    i["snwd"] = snwd
+                    i["awnd"] = awnd
+                    found = True
+
+            if found:
+                with open("data/rdu-weather-history.json", "w") as file:
+                    json.dump(data, file, indent=4)
+                return {"message": f"Donnée pour la date {date} mise à jour avec succès."}
+            else:
+                raise HTTPException(status_code=404, detail=f"Aucune donnée correspondant à la date {date} n'a été trouvée.")
