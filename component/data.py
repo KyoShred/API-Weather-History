@@ -1,27 +1,17 @@
-import json
+import mysql.connector
 
+mydb = mysql.connector.connect(
+  host="localhost",
+  user="root",
+  password="root",
+    database="meteo"
 
-def load_data():
-    """
-    Charge les données du fichier JSON et les retourne sous forme de dictionnaire.
+)
 
-    Returns:
-      dict: Le dictionnaire contenant les données.
-    """
+mycursor = mydb.cursor()
 
-    with open("data/rdu-weather-history.json", "r") as file:
-        data = json.load(file)
+mycursor.execute("SHOW DATABASES")
 
-    return data
+for x in mycursor:
+  print(x)
 
-
-def write_data(data):
-    """
-    Écrit les données dans le fichier JSON.
-
-    Args:
-      data (dict): Le dictionnaire contenant les données.
-    """
-
-    with open("data/rdu-weather-history.json", "w") as file:
-        json.dump(data, file, indent=4)
