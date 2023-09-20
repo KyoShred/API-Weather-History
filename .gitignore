@@ -33,3 +33,4 @@ venv.bak/
 # IDE settings
 .idea/
 .DS_Store
+rdu-weather-history.json
