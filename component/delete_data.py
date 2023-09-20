@@ -1,21 +1,11 @@
 """
-exemple d'une API FastAPI permettent de supprimer des dates
+API FastAPI permettent de supprimer des dates
 
 """
 from datetime import date
 
-from fastapi import FastAPI
-import json
 
-app = FastAPI()
-
-#permet d'ouvrire le fichier JSON et le lire
-
-with open("data/rdu-weather-history.json", "r") as file:
-    data = json.load(file)
-
-app.delete("data")
-async def delete_data(dated : str= None, datef : str= None):
+def delete_data(dated: str, datef: str):
     """
     supprimer des données en fonction d'une intervalle de dates spécifiée.
 
@@ -28,13 +18,12 @@ async def delete_data(dated : str= None, datef : str= None):
     """
     deleted_count = 0
 
-    for item in data:
+# éviter des problèmes de modification, en parcourant cette copie des données
+    data_copy = data.copy()
+
+    for item in data_copy:
         if dated <= item['date'] <= datef:
             date.remove(item)
             deleted_count += 1
 
-        return {'delected '}
-
-    else:
-
-        return {"delected : data"}
+        return {'message':f'{deleted_count} les données supprimer'}

@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from component.data import load_data
 from component.reader import get_data
+from component.delete_data import delete_data
 
 
 app = FastAPI()
@@ -22,3 +23,5 @@ async def get_precipitation(prcp: float):
     data = load_data()
 
     return get_precipitation(data, prcp)
+
+

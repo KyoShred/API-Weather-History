@@ -6,13 +6,13 @@ app = FastAPI()
 
 # Définissez le modèle de données DonneesJSON avec des valeurs par défaut
 class DonneesJSON(BaseModel):
-    date: datetime = datetime(2018, 10, 8)
+    date: str
     tmin: int
     tmax: int
     prcp: float
-    snow: int
-    snwd: int
-    awnd: int
+    snow: float
+    snwd: float
+    awnd: float
 
 # Endpoint pour ajouter des données JSON
 @app.post("/ajouter_donnees/")
