@@ -1,15 +1,15 @@
-import json
-from http.client import HTTPException
+from fastapi import Depends, FastAPI, HTTPException
+from sqlalchemy.orm import Session
 
-from fastapi import FastAPI
-from component.data import load_data
-from component.data import write_data
-from component.reader import get_data
-from data.database import SessionLocal
+from . import crud, models, schemas
+from .database import SessionLocal, engine
+
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
 
+# Dependency
 def get_db():
     db = SessionLocal()
     try:
@@ -17,10 +17,12 @@ def get_db():
     finally:
         db.close()
 
-
-@app.get("/data")
-def get_date():
-    return get_data(load_data())
+@app.post("/countries/", response_model=schemas.Country)
+def create_country(country: schemas.CountryCreate, db: Session = Depends(get_db)):
+    db_country = crud.get_country_by_name(db, name=country.name)
+    if db_country:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    return crud.create_country(db=db, country=country)
 
 
 @app.get("/data_int")
