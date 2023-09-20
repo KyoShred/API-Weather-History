@@ -97,3 +97,10 @@ def create_city_for_meteo(
 
 
 
+    if found:
+        with open("data/rdu-weather-history.json", "w") as file:
+                    json.dump(data, file, indent=4)
+        return {"message": f"Donnée pour la date {date} mise à jour avec succès."}
+    else:
+                
+        raise HTTPException(status_code=404, detail=f"Aucune donnée correspondant à la date {date} n'a été trouvée.")
