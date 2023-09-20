@@ -5,11 +5,17 @@ from fastapi import FastAPI
 from component.data import load_data
 from component.data import write_data
 from component.reader import get_data
-
+from data.database import SessionLocal
 
 app = FastAPI()
 
-data = load_data()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 @app.get("/data")
@@ -45,6 +51,7 @@ async def create_item(date: str, tmin: int, tmax: int, prcp: float, snow: float,
     write_data(data).append(new_entry)
     return {"message": "Données ajoutées avec succès"}
 
+
 @app.delete("/delete")
 async def delete_item(date_compare: str):
     donnee = 0
@@ -77,7 +84,7 @@ async def modify_item(date: str, tmin: int, tmax: int, prcp: float, snow: float,
     donnee = 0
     found = False  # Utilisez cette variable pour indiquer si une correspondance a été trouvée
     for i in data:
-        donnee +=1
+        donnee += 1
         if i["date"] == date:
             found = True
 
@@ -87,22 +94,23 @@ async def modify_item(date: str, tmin: int, tmax: int, prcp: float, snow: float,
     else:
         print(f"aucune donnée n'existe à la date {date}")
 
+
 @app.put("/update/{date}")
 async def update_item(date: str, tmin: int, tmax: int, prcp: float, snow: float, snwd: float, awnd: float):
-            found = False  # Utilisez cette variable pour indiquer si une correspondance a été trouvée
-            for i in data:
-                if i["date"] == date:
-                    i["tmin"] = tmin
-                    i["tmax"] = tmax
-                    i["prcp"] = prcp
-                    i["snow"] = snow
-                    i["snwd"] = snwd
-                    i["awnd"] = awnd
-                    found = True
+    found = False  # Utilisez cette variable pour indiquer si une correspondance a été trouvée
+    for i in data:
+        if i["date"] == date:
+            i["tmin"] = tmin
+            i["tmax"] = tmax
+            i["prcp"] = prcp
+            i["snow"] = snow
+            i["snwd"] = snwd
+            i["awnd"] = awnd
+            found = True
 
-            if found:
-                with open("data/rdu-weather-history.json", "w") as file:
-                    json.dump(data, file, indent=4)
-                return {"message": f"Donnée pour la date {date} mise à jour avec succès."}
-            else:
-                raise HTTPException(status_code=404, detail=f"Aucune donnée correspondant à la date {date} n'a été trouvée.")
+    if found:
+        with open("data/rdu-weather-history.json", "w") as file:
+            json.dump(data, file, indent=4)
+        return {"message": f"Donnée pour la date {date} mise à jour avec succès."}
+    else:
+        raise HTTPException(status_code=404, detail=f"Aucune donnée correspondant à la date {date} n'a été trouvée.")
