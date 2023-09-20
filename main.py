@@ -74,25 +74,6 @@ async def delete_item(date_compare: str):
         return {"message": f"Aucune donnée correspondant à la date {date_compare} n'a été trouvée."}
 
 
-class HTTPException:
-    pass
-
-
-@app.patch("/modify")
-async def modify_item(date: str, tmin: int, tmax: int, prcp: float, snow: float, snwd: float,
-                      awnd: float):
-    donnee = 0
-    found = False  # Utilisez cette variable pour indiquer si une correspondance a été trouvée
-    for i in data:
-        donnee += 1
-        if i["date"] == date:
-            found = True
-
-    if found:
-        print(f"modification possible à la donnée {donnee}")
-
-    else:
-        print(f"aucune donnée n'existe à la date {date}")
 
 
 @app.put("/update/{date}")
