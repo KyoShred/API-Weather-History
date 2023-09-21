@@ -29,6 +29,7 @@ def create_country(country: schemas.CountryCreate, db: Session = Depends(get_db)
     return crud.create_country(db=db, country=country)
 
 
+
 @app.get("/countries/", response_model=list[schemas.Country])
 def read_countries(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     countries = crud.get_countries(db, skip=skip, limit=limit)
