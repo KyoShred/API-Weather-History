@@ -50,3 +50,33 @@ def create_meteo(db: Session, meteo: schemas.MeteoCreate, city_id: int):
     db.refresh(db_meteo)
     return db_meteo
 
+def delete_country(db: Session, country_name: str):
+    db_country = db.query(models.Country).filter(models.Country.name == country_name).first()
+
+    if db_country:
+        db.delete(db_country)
+        db.commit()
+        return True
+    else:
+        return False
+
+def delete_city(db: Session, city_name: str):
+    db_city = db.query(models.City).filter(models.City.name == city_name).first()
+
+    if db_city:
+        db.delete(db_city)
+        db.commit()
+        return True
+    else:
+        return False
+
+
+def delete_data(db: Session, meteo_date: str):
+    db_data = db.query(models.Meteo).filter(models.Meteo.date == meteo_date).first()
+
+    if db_data:
+        db.delete(db_data)
+        db.commit()
+        return True
+    else:
+        return False

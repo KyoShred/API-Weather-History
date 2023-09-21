@@ -18,10 +18,10 @@ def get_db():
         db.close()
 
 @app.post("/countries/", response_model=schemas.Country)
-def create_country(country: schemas.CountryCreate, db: Session = Depends(get_db)):
+def create_country( country: schemas.CountryCreate, db: Session = Depends(get_db)):
     db_country = crud.get_country_by_name(db, name=country.name)
     if db_country:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        raise HTTPException(status_code=400, detail="message")
     return crud.create_country(db=db, country=country)
 
 
@@ -60,12 +60,6 @@ def read_city(city_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return db_city
 
-@app.post("/cities/{country_id}/cities/", response_model=schemas.City)
-def create_country_for_city(
-    city_id: int, country: schemas.CountryCreate, db: Session = Depends(get_db)
-):
-    return crud.create_city(db=db, country_id=country, city_id=city_id)
-
 
 @app.post("/meteos/", response_model=schemas.Meteo)
 def create_meteo(meteo: schemas.MeteoCreate, db: Session = Depends(get_db)):
@@ -89,18 +83,17 @@ def read_meteo(meteo_id: int, db: Session = Depends(get_db)):
     return db_meteo
 
 
-@app.post("/meteos/{meteo_id}/cities/", response_model=schemas.City)
-def create_city_for_meteo(
-    meteo_id: int, city: schemas.CityCreate, db: Session = Depends(get_db)
-):
-    return crud.create_meteo_city(db=db, city=city, meteo_id=meteo_id)
+@app.delete("/delete_country", response_model=list[schemas.Country])
+def delete_countries(country_name: str, db: Session = Depends(get_db)):
+    db_country = crud.delete_country(db, country_name=country_name)
+    return db_country
 
+@app.delete("/delete_city", response_model=list[schemas.City])
+def delete_cities(city_name: str, db: Session = Depends(get_db)):
+    db_city = crud.delete_city(db, city_name=city_name)
+    return db_city
 
-
-    if found:
-        with open("data/rdu-weather-history.json", "w") as file:
-                    json.dump(data, file, indent=4)
-        return {"message": f"Donnée pour la date {date} mise à jour avec succès."}
-    else:
-                
-        raise HTTPException(status_code=404, detail=f"Aucune donnée correspondant à la date {date} n'a été trouvée.")
+@app.delete("/delete_data", response_model=list[schemas.Meteo])
+def delete_data(meteo_date: str, db: Session = Depends(get_db)):
+    db_meteo = crud.delete_data(db, meteo_date=meteo_date)
+    return db_meteo
