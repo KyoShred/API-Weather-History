@@ -41,18 +41,7 @@ def read_country(country_name: str, db: Session = Depends(get_db)):
     db_country = crud.get_country_by_name(db, country_name=country_name)
     if db_country is None:
         raise HTTPException(status_code=404, detail="Country not found")
-    else
-        #retrieve all cities for this country
-        db_city = crud.get_city_by_name(db, country_name=country_name)
-        if db_city is None:
-            raise HTTPException(status_code=404, detail="City not found")
-        else:
-            #retrieve all meteos for this city
-            db_meteo = crud.get_meteo_by_date(db, country_name=country_name)
-            if db_meteo is None:
-                raise HTTPException(status_code=404, detail="Meteo not found")
-            else:
-                return db_country, db_city, db_meteo
+    return db_country
 
 
 
