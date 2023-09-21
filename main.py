@@ -1,8 +1,8 @@
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
 
-from . import crud, models, schemas
-from .database import SessionLocal, engine
+from data import crud, models, schemas
+from data.database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -25,75 +25,75 @@ def create_country(country: schemas.CountryCreate, db: Session = Depends(get_db)
     return crud.create_country(db=db, country=country)
 
 
-@app.get("/data_int")
-def get_date_filter(dated: str = None, datef: str = None):
-    return get_date(load_data(), dated, datef)
+@app.get("/countries/", response_model=list[schemas.Country])
+def read_countries(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    countries = crud.get_countries(db, skip=skip, limit=limit)
+    return countries
 
 
-@app.get("/data_prcp")
-def get_precipitation(prcp: float):
-    return get_precipitation(load_data(), prcp)
+@app.get("/countries/{country_id}", response_model=schemas.Country)
+def read_country(country_id: int, db: Session = Depends(get_db)):
+    db_country = crud.get_country(db, user_id=country_id)
+    if db_country is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_country
 
 
-# Définition de la route POST /items
-@app.post("/items")
-async def create_item(date: str, tmin: int, tmax: int, prcp: float, snow: float, snwd: float,
-                      awnd: float):  # Ajout d'une donnée métérologique
-
-    new_entry = {
-        "date": date,
-        "tmin": tmin,
-        "tmax": tmax,
-        "prcp": prcp,
-        "snow": snow,
-        "snwd": snwd,
-        "awnd": awnd
-    }
-
-    write_data(data).append(new_entry)
-    return {"message": "Données ajoutées avec succès"}
+@app.post("/cities/", response_model=schemas.City)
+def create_city(city: schemas.CityCreate, db: Session = Depends(get_db)):
+    db_city = crud.get_city_by_name(db, name=city.name)
+    if db_city:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    return crud.create_city(db=db, city=city, country_id=city.id_country)
 
 
-@app.delete("/delete")
-async def delete_item(date_compare: str):
-    donnee = 0
-    found = False  # Utilisez cette variable pour indiquer si une correspondance a été trouvée
-
-    for i in data:
-        donnee += 1
-        if i["date"] == date_compare:
-            print(f"élément trouvé à la donnée {donnee}")
-            data.remove(i)
-            with open("data/rdu-weather-history.json", "w") as file:
-                json.dump(data, file, indent=4)
-
-            print(f"élément supprimé")
-            found = True  # Indiquez que vous avez trouvé une correspondance
-
-    if found:
-        return {"message": f"Donnée pour la date {date_compare} supprimée avec succès."}
-    else:
-        return {"message": f"Aucune donnée correspondant à la date {date_compare} n'a été trouvée."}
+@app.get("/cities/", response_model=list[schemas.City])
+def read_cities(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    cities = crud.get_cities(db, skip=skip, limit=limit)
+    return cities
 
 
+@app.get("/cities/{city_id}", response_model=schemas.City)
+def read_city(city_id: int, db: Session = Depends(get_db)):
+    db_city = crud.get_city(db, user_id=city_id)
+    if db_city is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_city
+
+@app.post("/cities/{country_id}/cities/", response_model=schemas.City)
+def create_country_for_city(
+    city_id: int, country: schemas.CountryCreate, db: Session = Depends(get_db)
+):
+    return crud.create_city(db=db, country_id=country, city_id=city_id)
 
 
-@app.put("/update/{date}")
-async def update_item(date: str, tmin: int, tmax: int, prcp: float, snow: float, snwd: float, awnd: float):
-    found = False  # Utilisez cette variable pour indiquer si une correspondance a été trouvée
-    for i in data:
-        if i["date"] == date:
-            i["tmin"] = tmin
-            i["tmax"] = tmax
-            i["prcp"] = prcp
-            i["snow"] = snow
-            i["snwd"] = snwd
-            i["awnd"] = awnd
-            found = True
+@app.post("/meteos/", response_model=schemas.Meteo)
+def create_meteo(meteo: schemas.MeteoCreate, db: Session = Depends(get_db)):
+    db_meteo = crud.get_meteo_by_date(db, date=meteo.date)
+    if db_meteo:
+        raise HTTPException(status_code=400, detail="Date already registered")
+    return crud.create_meteo(db=db, meteo=meteo, city_id=meteo.id_city)
 
-    if found:
-        with open("data/rdu-weather-history.json", "w") as file:
-            json.dump(data, file, indent=4)
-        return {"message": f"Donnée pour la date {date} mise à jour avec succès."}
-    else:
-        raise HTTPException(status_code=404, detail=f"Aucune donnée correspondant à la date {date} n'a été trouvée.")
+
+@app.get("/meteos/", response_model=list[schemas.Meteo])
+def read_meteos(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    meteos = crud.get_meteos(db, skip=skip, limit=limit)
+    return meteos
+
+
+@app.get("/meteos/{meteo_id}", response_model=schemas.Meteo)
+def read_meteo(meteo_id: int, db: Session = Depends(get_db)):
+    db_meteo = crud.get_meteo(db, meteo_id=meteo_id)
+    if db_meteo is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_meteo
+
+
+@app.post("/meteos/{meteo_id}/cities/", response_model=schemas.City)
+def create_city_for_meteo(
+    meteo_id: int, city: schemas.CityCreate, db: Session = Depends(get_db)
+):
+    return crud.create_meteo_city(db=db, city=city, meteo_id=meteo_id)
+
+
+
