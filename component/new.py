@@ -26,7 +26,3 @@ def create_item(wdata, date: str, tmin: int, tmax: int, prcp: float, snow: float
         "snwd": snwd,
         "awnd": awnd
     }
-    data.append(new_entry)
-    with open("rdu-weather-history.json", "w") as file:
-        json.dump(data, file, indent=4)
-    return {"message": "Données ajoutées avec succès"}
