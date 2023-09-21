@@ -8,13 +8,13 @@ class Country(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
 
-    cities = relationship("Cities",  back_populates="country")
+    cities = relationship("City",  back_populates="country")
 
 class City(Base):
     __tablename__ = "city"
     id = Column(Integer, primary_key=True, index=True)
-    id_country= Column(Integer, ForeignKey("countries.id"))
-    name = Column(String, Unique=True, index=True)
+    id_country = Column(Integer, ForeignKey("country.id"))
+    name = Column(String, unique=True, index=True)
 
     country = relationship("Country", back_populates="cities")
     meteo = relationship("Meteo", back_populates="city")
@@ -22,7 +22,7 @@ class City(Base):
 class Meteo(Base):
     __tablename__ = "meteo"
     id = Column(Integer, primary_key=True, index=True)
-    id_city = Column(Integer, ForeignKey("cities.id"))
+    id_city = Column(Integer, ForeignKey("city.id"))
     date = Column(String)
     tmin = Column(Integer)
     tmax = Column(Integer)
