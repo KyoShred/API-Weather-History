@@ -16,6 +16,7 @@ class CityBase(BaseModel):
     name: str
 
 class CityCreate(CityBase):
+    id_country: int
     pass
 
 class City(CityBase):
@@ -27,19 +28,20 @@ class City(CityBase):
 
 class MeteoBase(BaseModel):
     date: str
-
-class MeteoCreate(MeteoBase):
-    pass
-
-class Meteo(MeteoBase):
-    id: int
-    id_city: int
     tmin: int
     tmax: int
     prcp: float
     snow: float
     snowd: float
     awnd: float
+
+class MeteoCreate(MeteoBase):
+    id_city: int
+    pass
+
+class Meteo(MeteoBase):
+    id: int
+    id_city: int
 
     class Config:
         orm_mode =True
