@@ -13,6 +13,7 @@ with open("data/rdu-weather-history.json", "r") as file:
 # with open("data/rdu-weather-history.json", "w") as file:
 #     json.dump(wdata, file, indent=4)
 
+
 @app.get("/date")
 def get_date():
     """Display all the data from the json file.
@@ -77,3 +78,5 @@ async def get_temperature(mintemp: float, maxtemp: float):
 #                 awnd: float):  # Ajout d'une donnée métérologique
 
 #     return create_item(date, tmin, tmax, prcp, snow, snwd, awnd)
+
+
