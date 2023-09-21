@@ -31,12 +31,28 @@ def read_countries(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
     return countries
 
 
-@app.get("/countries/{country_id}", response_model=schemas.Country)
-def read_country(country_id: int, db: Session = Depends(get_db)):
-    db_country = crud.get_country(db, user_id=country_id)
+@app.get("/country/{country_name}", response_model=schemas.Country)
+def read_country(country_name: str, db: Session = Depends(get_db)):
+    db_country = crud.get_country_by_name(db, country_name=country_name)
     if db_country is None:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="Country not found")
     return db_country
+
+
+
+@app.put("/countryUpdate/{country_name}", response_model=schemas.Country)
+def update_country(country_name: str, country_update: schemas.CountryUpdate, db: Session = Depends(get_db)):
+    db_country = crud.get_country_by_name(db, country_name=country_name)
+    if db_country is None:
+        raise HTTPException(status_code=404, detail="Country not found")
+
+    db_country.name = country_update.name
+
+    db.commit()
+    db.refresh(db_country)
+    return db_country
+
+
 
 
 @app.post("/cities/", response_model=schemas.City)
@@ -53,9 +69,9 @@ def read_cities(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return cities
 
 
-@app.get("/cities/{city_id}", response_model=schemas.City)
-def read_city(city_id: int, db: Session = Depends(get_db)):
-    db_city = crud.get_city(db, user_id=city_id)
+@app.get("/city/{city_name}", response_model=schemas.City)
+def read_city(city_name: str, db: Session = Depends(get_db)):
+    db_city = crud.get_city_by_name(db, city_name=city_name)
     if db_city is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_city
@@ -65,6 +81,22 @@ def create_country_for_city(
     city_id: int, country: schemas.CountryCreate, db: Session = Depends(get_db)
 ):
     return crud.create_city(db=db, country_id=country, city_id=city_id)
+
+
+# ...
+
+@app.put("/cities/{city_name}", response_model=schemas.City)
+def update_city(city_name: str, city_update: schemas.CityUpdate, db: Session = Depends(get_db)):
+    db_city = crud.get_city_by_name(db, city_name=city_name)
+    if db_city is None:
+        raise HTTPException(status_code=404, detail="City not found")
+
+    db_city.name = city_update.name
+
+    db.commit()
+    db.refresh(db_city)
+    return db_city
+
 
 
 @app.post("/meteos/", response_model=schemas.Meteo)
@@ -81,9 +113,9 @@ def read_meteos(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return meteos
 
 
-@app.get("/meteos/{meteo_id}", response_model=schemas.Meteo)
-def read_meteo(meteo_id: int, db: Session = Depends(get_db)):
-    db_meteo = crud.get_meteo(db, meteo_id=meteo_id)
+@app.get("/meteos/{meteo_date}", response_model=schemas.Meteo)
+def read_meteo(meteo_date: str, db: Session = Depends(get_db)):
+    db_meteo = crud.get_meteo_by_date(db, meteo_date=meteo_date)
     if db_meteo is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_meteo
@@ -94,6 +126,27 @@ def create_city_for_meteo(
     meteo_id: int, city: schemas.CityCreate, db: Session = Depends(get_db)
 ):
     return crud.create_meteo_city(db=db, city=city, meteo_id=meteo_id)
+
+
+@app.put("/meteos/{meteo_date}", response_model=schemas.Meteo)
+def update_meteo(meteo_date: str, meteo_update: schemas.MeteoUpdate, db: Session = Depends(get_db)):
+    db_meteo = crud.get_meteo_by_date(db, meteo_date=meteo_date)
+    if db_meteo is None:
+        raise HTTPException(status_code=404, detail="Meteo not found")
+
+    # Mettez à jour les champs nécessaires de db_meteo à partir de meteo_update
+    db_meteo.date = meteo_update.date
+    db_meteo.tmin = meteo_update.tmin
+    db_meteo.tmax = meteo_update.tmax
+    db_meteo.prcp = meteo_update.prcp
+    db_meteo.snow = meteo_update.snow
+    db_meteo.snowd = meteo_update.snowd
+    db_meteo.awnd = meteo_update.awnd
+
+    db.commit()
+    db.refresh(db_meteo)
+    return db_meteo
+
 
 
 

@@ -6,6 +6,10 @@ class CountryBase(BaseModel):
 class CountryCreate(CountryBase):
     pass
 
+
+class CountryUpdate(BaseModel):
+    name: str
+
 class Country(CountryBase):
     id: int
 
@@ -18,6 +22,9 @@ class CityBase(BaseModel):
 class CityCreate(CityBase):
     id_country: int
     pass
+
+class CityUpdate(BaseModel):
+    name: str
 
 class City(CityBase):
     id: int
@@ -38,6 +45,15 @@ class MeteoBase(BaseModel):
 class MeteoCreate(MeteoBase):
     id_city: int
     pass
+
+class MeteoUpdate(BaseModel):
+    date: str
+    tmin: int
+    tmax: int
+    prcp: float
+    snow: float
+    snowd: float
+    awnd: float
 
 class Meteo(MeteoBase):
     id: int
