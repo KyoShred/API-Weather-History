@@ -41,6 +41,8 @@ def read_countries(skip: int = 0, limit: int = 100, db: Session = Depends(get_db
      	 Liste des pays de la Communauté
     """
     countries = crud.get_countries(db, skip=skip, limit=limit)
+    if not countries:
+        raise HTTPException(status_code=404, detail="No countries found")
     return countries
 
 
@@ -98,5 +100,4 @@ def delete_countries(country_name: str, db: Session = Depends(get_db)):
      Returns: 
      	 Vrai si le pays a été supprimé
     """
-    db_country = crud.delete_country(db, country_name=country_name)
-    return db_country
+    crud.delete_country(db, country_name=country_name)
