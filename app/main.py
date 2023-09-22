@@ -14,4 +14,11 @@ app.include_router(Meteo.router)
 
 @app.get("/")
 async def root():
+    """
+     C'est la racine de l'application.
+     
+     
+     Returns: 
+     	 " Hello Bigger Applications! "
+    """
     return {"message": "Hello Bigger Applications!"}

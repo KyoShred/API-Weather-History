@@ -1,0 +1,7 @@
+{
+    "docify.commentService.docstringFormat": "Google",
+    "docify.commentService.programmingLanguage": "python",
+    "docify.commentService.moreExpressiveComments": false,
+    "docify.commentService.inlineComments": false,
+    "docify.commentService.autoTranslationService": "French"
+}
