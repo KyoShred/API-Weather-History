@@ -4,6 +4,7 @@ class CountryBase(BaseModel):
     name: str
 
 class CountryCreate(CountryBase):
+    name: str
     pass
 
 

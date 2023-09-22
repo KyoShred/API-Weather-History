@@ -17,11 +17,11 @@ def get_db():
     finally:
         db.close()
 
-@app.post("/countries/", response_model=schemas.Country)
-def create_country(country: schemas.CountryCreate, db: Session = Depends(get_db)):
-    db_country = crud.get_country_by_name(db, name=country.name)
+@app.post("/countryCreate/{country_name}", response_model=schemas.Country)
+def create_country(country_name: str, country: schemas.CountryCreate, db: Session = Depends(get_db)):
+    db_country = crud.get_country_by_name(db, country_name=country_name)
     if db_country:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        raise HTTPException(status_code=400, detail="Country already registered")
     return crud.create_country(db=db, country=country)
 
 
@@ -55,7 +55,7 @@ def update_country(country_name: str, country_update: schemas.CountryUpdate, db:
 
 
 
-@app.post("/cities/", response_model=schemas.City)
+@app.post("/citiesCreate/", response_model=schemas.City)
 def create_city(city: schemas.CityCreate, db: Session = Depends(get_db)):
     db_city = crud.get_city_by_name(db, name=city.name)
     if db_city:
