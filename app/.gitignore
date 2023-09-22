@@ -31,6 +31,6 @@ env.bak/
 venv.bak/
 
 # IDE settings
-.idea/
+../.idea/
 .DS_Store
 rdu-weather-history.json
