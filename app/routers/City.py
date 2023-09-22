@@ -28,7 +28,12 @@ def read_city(city_name: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return db_city
 
-
+@router.get("/getCitiesByCountry/{country_name}", response_model=list[schemas.City])
+def read_cities_by_country(country_name: str, db: Session = Depends(get_db)):
+    cities = crud.get_cities_by_country_name(db, country_name=country_name)
+    if not cities:
+        raise HTTPException(status_code=404, detail="No cities found for this country")
+    return cities
 # ...
 
 @router.put("/updateCities/{city_name}", response_model=schemas.City)
