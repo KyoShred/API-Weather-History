@@ -10,6 +10,9 @@ router = APIRouter()
 
 @router.post("/createMeteo/", response_model=schemas.Meteo)
 def create_meteo(meteo: schemas.MeteoCreate, db: Session = Depends(get_db)):
+    """
+
+    """
     db_meteo = crud.get_meteo_by_date(db, meteo_date=meteo.date)
     if db_meteo:
         raise HTTPException(status_code=409, detail="Date already registered")
@@ -19,6 +22,8 @@ def create_meteo(meteo: schemas.MeteoCreate, db: Session = Depends(get_db)):
 @router.get("/getMeteos/", response_model=list[schemas.Meteo])
 def read_meteos(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     meteos = crud.get_meteos(db, skip=skip, limit=limit)
+    if not meteos:
+        raise HTTPException(status_code=404, detail="No meteos found")
     return meteos
 
 
@@ -42,7 +47,6 @@ def update_meteo(meteo_date: str, meteo_update: schemas.MeteoUpdate, db: Session
     if db_meteo is None:
         raise HTTPException(status_code=404, detail="Meteo not found")
 
-    # Mettez à jour les champs nécessaires de db_meteo à partir de meteo_update
     db_meteo.date = meteo_update.date
     db_meteo.tmin = meteo_update.tmin
     db_meteo.tmax = meteo_update.tmax
@@ -58,5 +62,5 @@ def update_meteo(meteo_date: str, meteo_update: schemas.MeteoUpdate, db: Session
 
 @router.delete("/deleteData", response_model=list[schemas.Meteo])
 def delete_data(meteo_date: str, db: Session = Depends(get_db)):
-    db_meteo = crud.delete_data(db, meteo_date=meteo_date)
-    return db_meteo
+    crud.delete_data(db, meteo_date=meteo_date)
+

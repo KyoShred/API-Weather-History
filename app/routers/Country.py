@@ -19,6 +19,8 @@ def create_country(country_name: str, country: schemas.CountryCreate, db: Sessio
 @router.get("/getCountries/", response_model=list[schemas.Country])
 def read_countries(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     countries = crud.get_countries(db, skip=skip, limit=limit)
+    if not countries:
+        raise HTTPException(status_code=404, detail="No countries found")
     return countries
 
 
@@ -45,5 +47,4 @@ def update_country(country_name: str, country_update: schemas.CountryUpdate, db:
 
 @router.delete("/deleteCountry", response_model=list[schemas.Country])
 def delete_countries(country_name: str, db: Session = Depends(get_db)):
-    db_country = crud.delete_country(db, country_name=country_name)
-    return db_country
+    crud.delete_country(db, country_name=country_name)
