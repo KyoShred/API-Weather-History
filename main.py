@@ -1,3 +1,7 @@
+from component.new import create_item
+from component.reader import get_data, get_date_data, get_precipitation, get_temperature_range
+from fastapi import FastAPI
+import json
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
 
@@ -5,10 +9,6 @@ from data import crud, models, schemas
 from data.database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
-import json
-from fastapi import FastAPI
-from component.reader import get_data, get_date_data, get_precipitation, get_temperature_range
-from component.new import create_item
 
 app = FastAPI()
 
@@ -21,13 +21,13 @@ def get_db():
     finally:
         db.close()
 
+
 @app.post("/countries/", response_model=schemas.Country)
 def create_country(country: schemas.CountryCreate, db: Session = Depends(get_db)):
-    db_country = crud.get_country_by_name(db, name=country.name)
+    db_country = crud.get_country_by_name(db, country_name=country.name)
     if db_country:
         raise HTTPException(status_code=400, detail="Email already registered")
     return crud.create_country(db=db, country=country)
-
 
 
 @app.get("/countries/", response_model=list[schemas.Country])
@@ -41,8 +41,20 @@ def read_country(country_name: str, db: Session = Depends(get_db)):
     db_country = crud.get_country_by_name(db, country_name=country_name)
     if db_country is None:
         raise HTTPException(status_code=404, detail="Country not found")
-    return db_country
-
+    else:
+        country_id = db_country.id
+        # retrieve all cities for this country
+        db_city = crud.get_city_by_country(db, id_country=country_id)
+        if db_city is None:
+            raise HTTPException(status_code=404, detail="City not found")
+        else:
+            city_id = db_city.id
+            # retrieve all meteos for this city
+            db_meteo = crud.get_meteo_by_city(db, city_id=city_id)
+            if db_meteo is None:
+                raise HTTPException(status_code=404, detail="Meteo not found")
+            else:
+                return db_country, db_city, db_meteo
 
 
 @app.put("/countryUpdate/{country_name}", response_model=schemas.Country)
@@ -58,11 +70,9 @@ def update_country(country_name: str, country_update: schemas.CountryUpdate, db:
     return db_country
 
 
-
-
 @app.post("/cities/", response_model=schemas.City)
 def create_city(city: schemas.CityCreate, db: Session = Depends(get_db)):
-    db_city = crud.get_city_by_name(db, name=city.name)
+    db_city = crud.get_city_by_name(db, city_name=city.name)
     if db_city:
         raise HTTPException(status_code=400, detail="Email already registered")
     return crud.create_city(db=db, city=city, country_id=city.id_country)
@@ -80,6 +90,7 @@ def read_city(city_name: str, db: Session = Depends(get_db)):
     if db_city is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_city
+
 
 @app.post("/cities/{country_id}/cities/", response_model=schemas.City)
 def create_country_for_city(
@@ -101,7 +112,6 @@ def update_city(city_name: str, city_update: schemas.CityUpdate, db: Session = D
     db.commit()
     db.refresh(db_city)
     return db_city
-
 
 
 @app.post("/meteos/", response_model=schemas.Meteo)
@@ -151,7 +161,3 @@ def update_meteo(meteo_date: str, meteo_update: schemas.MeteoUpdate, db: Session
     db.commit()
     db.refresh(db_meteo)
     return db_meteo
-
-
-
-
