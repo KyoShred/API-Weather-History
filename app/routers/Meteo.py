@@ -1,18 +1,16 @@
 from fastapi import APIRouter
 from fastapi import Depends, HTTPException
-from ..main import get_db
 from sqlalchemy.orm import Session
 
-from ..data import crud, models
-from ..data import schemas
-from ..data.database import SessionLocal, engine
+from ..data import crud, schemas
+from ..data.db import get_db
 
 router = APIRouter()
 
 
 @router.post("/createMeteo/", response_model=schemas.Meteo)
 def create_meteo(meteo: schemas.MeteoCreate, db: Session = Depends(get_db)):
-    db_meteo = crud.get_meteo_by_date(db, date=meteo.date)
+    db_meteo = crud.get_meteo_by_date(db, meteo_date=meteo.date)
     if db_meteo:
         raise HTTPException(status_code=409, detail="Date already registered")
     return crud.create_meteo(db=db, meteo=meteo, city_id=meteo.id_city)
@@ -45,6 +43,7 @@ def update_meteo(meteo_date: str, meteo_update: schemas.MeteoUpdate, db: Session
     db_meteo.snow = meteo_update.snow
     db_meteo.snowd = meteo_update.snowd
     db_meteo.awnd = meteo_update.awnd
+    db_meteo.id_city = meteo_update.id_city
 
     db.commit()
     db.refresh(db_meteo)

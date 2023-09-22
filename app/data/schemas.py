@@ -55,6 +55,7 @@ class MeteoUpdate(BaseModel):
     snow: float
     snowd: float
     awnd: float
+    id_city: int
 
 class Meteo(MeteoBase):
     id: int

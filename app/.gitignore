@@ -34,3 +34,5 @@ venv.bak/
 ../.idea/
 .DS_Store
 rdu-weather-history.json
+
+sql_app.db
