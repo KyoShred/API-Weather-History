@@ -82,7 +82,7 @@ def get_city_by_name(db: Session, city_name: str):
     """
     return db.query(models.City).filter(models.City.name == city_name).first()
 
-def get_city_by_country(db: Session, id_country: int):
+def get_cities_by_country_name(db: Session, country_name: str):
     """
      Prends toutes les villes pour un pays
      
@@ -93,7 +93,7 @@ def get_city_by_country(db: Session, id_country: int):
      Returns: 
      	 une liste de: classe: ` ~mediadrop. modèle. ville `
     """
-    return db.query(models.City).filter(models.Country.id == id_country).all()
+    return db.query(models.City).filter(models.City.country.has(name=country_name)).all()
 
 def get_cities(db: Session, skip: int =0, limit: int = 100):
     """
@@ -152,6 +152,9 @@ def get_meteo_by_date(db: Session, meteo_date: str):
      	 Les modèles de type
     """
     return db.query(models.Meteo).filter(models.Meteo.date == meteo_date).first()
+
+def get_meteos_by_city_name(db: Session, city_name: str):
+    return db.query(models.Meteo).filter(models.Meteo.city.has(name=city_name)).all()
 
 def get_meteos(db: Session, skip: int =0, limit: int = 100):
     """

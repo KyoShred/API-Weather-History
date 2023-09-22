@@ -60,6 +60,23 @@ def read_meteo(meteo_date: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Meteo not found")
     return db_meteo
 
+@router.get("/getMeteosByCity/{city_name}", response_model=list[schemas.Meteo])
+def read_meteos_by_city(city_name: str, db: Session = Depends(get_db)):
+    """
+     Lire les météos par nom de ville
+     
+     Args:
+     	 city_name: Nom de la ville à lire
+     	 db: Connexion de base de données à utiliser.
+     
+     Returns: 
+     	 Liste de classes: ` Meteos `
+    """
+    meteos = crud.get_meteos_by_city_name(db, city_name=city_name)
+    if not meteos:
+        raise HTTPException(status_code=404, detail="No meteos found for this city")
+    return meteos
+
 @router.put("/updateMeteo/{meteo_date}", response_model=schemas.Meteo)
 def update_meteo(meteo_date: str, meteo_update: schemas.MeteoUpdate, db: Session = Depends(get_db)):
     """
