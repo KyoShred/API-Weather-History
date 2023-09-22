@@ -1,16 +1,15 @@
 from fastapi import APIRouter
 from fastapi import Depends, HTTPException
-from ..main import get_db
 from sqlalchemy.orm import Session
 
-from ..data import crud, models
-from ..data import schemas
+from app.data import crud, schemas
+from app.data.db import get_db
 
 router = APIRouter()
 
 @router.post("/createCity/", response_model=schemas.City)
 def create_city(city: schemas.CityCreate, db: Session = Depends(get_db)):
-    db_city = crud.get_city_by_name(db, name=city.name)
+    db_city = crud.get_city_by_name(db, city_name=city.name)
     if db_city:
         raise HTTPException(status_code=400, detail="Email already registered")
     return crud.create_city(db=db, city=city, country_id=city.id_country)
