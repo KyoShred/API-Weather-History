@@ -10,14 +10,15 @@ router = APIRouter()
 @router.post("/createCity/{city_name}", response_model=schemas.City)
 def create_city(city_name: str, city: schemas.CityCreate, db: Session = Depends(get_db)):
     """
-     Créez une ville dans la base de données.
+     Créer une ville dans la base de données.
      
      Args:
-     	 city: Une ville à créer.
+     	 city_name: Nom de la ville à créer.
+     	 city: Objet de la ville à créer.
      	 db: Connexion de base de données à utiliser.
      
      Returns: 
-     	 réponse JSON avec des informations sur la ville
+     	 Retourne l'objet de la ville nouvellement créé
     """
     db_city = crud.get_city_by_name(db, city_name=city_name)
     if db_city:
@@ -32,11 +33,11 @@ def read_cities(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
      
      Args:
      	 skip: Le nombre de disques à ignorer.
-     	 limit: Le nombre maximal de disques à lire.
+     	 limit: Le nombre maximal de dossiers à retourner.
      	 db: Base de données à utiliser pour la lecture.
      
      Returns: 
-     	 Liste de dictionnaires avec les touches " id " et " name "
+     	 Liste des classes: ` ~oldman. modèles. villes `
     """
     cities = crud.get_cities(db, skip=skip, limit=limit)
     if not cities:
@@ -51,7 +52,7 @@ def read_city(city_name: str, db: Session = Depends(get_db)):
      
      Args:
      	 city_name: Nom de la ville à lire
-     	 db: Connexion de base de données à utiliser (par défaut get_db)
+     	 db: Connexion de base de données à utiliser.
      
      Returns: 
      	 Objet de ville ou 404 si ce n'est pas le cas
@@ -104,5 +105,11 @@ def update_city(city_name: str, city_update: schemas.CityUpdate, db: Session = D
 
 @router.delete("/deleteCity", response_model=list[schemas.City])
 def delete_cities(city_name: str, db: Session = Depends(get_db)):
-    db_city = crud.delete_city(db, city_name=city_name)
-    return db_city
+    """
+     Supprimer les villes de la base de données
+     
+     Args:
+     	 city_name: Nom de la ville à supprimer
+     	 db: Base de données à utiliser pour
+    """
+    crud.delete_city(db, city_name=city_name)
