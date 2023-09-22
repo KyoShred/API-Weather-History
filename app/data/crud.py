@@ -24,8 +24,8 @@ def get_city(db:Session, city_id: int):
 def get_city_by_name(db: Session, city_name: str):
     return db.query(models.City).filter(models.City.name == city_name).first()
 
-def get_city_by_country(db: Session, id_country: int):
-    return db.query(models.City).filter(models.Country.id == id_country).all()
+def get_cities_by_country_name(db: Session, country_name: str):
+    return db.query(models.City).filter(models.City.country.has(name=country_name)).all()
 
 def get_cities(db: Session, skip: int =0, limit: int = 100):
     return db.query(models.City).offset(skip).limit(limit).all()
@@ -42,6 +42,9 @@ def get_meteo(db: Session, meteo_id: int):
 
 def get_meteo_by_date(db: Session, meteo_date: str):
     return db.query(models.Meteo).filter(models.Meteo.date == meteo_date).first()
+
+def get_meteos_by_city_name(db: Session, city_name: str):
+    return db.query(models.Meteo).filter(models.Meteo.city.has(name=city_name)).all()
 
 def get_meteos(db: Session, skip: int =0, limit: int = 100):
     return db.query(models.Meteo).offset(skip).limit(limit).all()
